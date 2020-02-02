@@ -1,10 +1,14 @@
 -#  This file is app/views/movies/index.html.haml
 %h2 All Movies
 
+//create the link on movie title and release date 
+//that links gets passed to a controller, which then feeds the view what it needs
+//to make the webpage. 
+//So... sort the list of movies before it gets passed to the view. 
 %table#movies.table.table-striped.col-md-12
   %thead
     %tr
-      %th Movie Title
+      %th= link_to "Movie Title", movies_path, data: {confirm: "Really now?"}
       %th Rating
       %th Release Date
       %th More Info
