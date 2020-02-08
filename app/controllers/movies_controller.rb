@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-
+  
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
@@ -11,15 +11,30 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.possible_ratings()
+    
+    #only display movies matching the requested ratings
+    movie_collection = nil
+    #this is kinda ugly, but now it works without putting any code in views (a virtue)
+    if (params.key?("ratings"))
+      @current_ratings = params["ratings"]
+      movie_collection = Movie.return_by_rating(params["ratings"].keys)
+    else
+      @current_ratings = Hash[@all_ratings.collect { |rating| [rating, 1] } ]
+      movie_collection = Movie.all
+    end
+    
+    #sort by title or rating
     if (params["sort"] == "title")
-      @movies = Movie.order(:title)
+      @movies = movie_collection.order(:title)
       @title_header = "hilite bg-warning"
     elsif (params["sort"] == "release_date")
-      @movies = Movie.order(:release_date)
+      @movies = movie_collection.order(:release_date)
       @release_date_header = 'hilite bg-warning'
     else 
-      @movies = Movie.all
+      @movies = movie_collection
     end
+    
   end
 
   def new
